@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Header from '../components/Header'
+import Header from "../components/Header"
 
 
 
@@ -9,15 +9,14 @@ export default function Home() {
       <Head>
         <title>Face Book</title>
       </Head>
-      <Header/>
-    {/* Header */}
+      <Header />
+      {/* Header */}
+      <main>
+        {/* Sidebar */}
+        {/* Feed */}
+        {/* Widgets */}
+      </main>
 
-    <main>
-      {/* Sidebar */}
-      {/* Feed */}
-      {/* Widgets */}
-    </main>
-    
     </div>
   )
 }
