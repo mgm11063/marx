@@ -3,7 +3,7 @@ import { useRef } from "react"
 import { useSession } from "next-auth/react"
 import { BellIcon, CalendarIcon, ChatIcon, ChevronDownIcon, ClockIcon, DesktopComputerIcon, EmojiHappyIcon, HomeIcon, ShoppingBagIcon, UserGroupIcon, UserIcon, VideoCameraIcon, ViewGridIcon } from "@heroicons/react/solid"
 import { FlagIcon, PlayIcon, SearchIcon, ShoppingCartIcon } from "@heroicons/react/outline"
-import { db } from "../firebase"
+import { db, storage } from "../firebase"
 import { serverTimestamp } from "firebase/firestore";
 import { useState } from "react"
 
@@ -25,9 +25,22 @@ function InputBox() {
             message: inputRef.current.value,
             name: session.user.name,
             email: session.user.email,
-            Image: session.user.image,
+            image: session.user.image,
             timestamp: serverTimestamp(),
-        });
+        }).then(doc => {
+            if (imageToPost) {
+                const uploadTask = storage.ref(`posts/${doc.id}`).putString(imageToPost, "data_url");
+                removeImage();
+
+                uploadTask.on("state_change", null, error => console.log(error), () => {
+                    storage.ref("posts").child(doc.id).getDownloadURL().then(url => {
+                        db.collection("posts").doc(doc.id).set({
+                            postImage: url
+                        }, { merge: true })
+                    })
+                });
+            }
+        })
 
         inputRef.current.value = "";
     };
